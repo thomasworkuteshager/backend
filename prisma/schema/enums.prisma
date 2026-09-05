@@ -1,0 +1,7 @@
+enum ContentStatus {
+  draft
+  published
+  archived
+
+  @@schema("content")
+}

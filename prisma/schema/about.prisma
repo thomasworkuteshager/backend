@@ -1,0 +1,344 @@
+// ABOUT AboutOverview
+
+model AboutOverview {
+  id             String        @id @default(uuid()) @db.Uuid
+  eyebrow        String?       @db.VarChar(100)
+  title          String        @db.VarChar(255)
+  description    String
+  excellenceText String?
+  status         ContentStatus @default(draft)
+
+  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("about_overview")
+  @@schema("content")
+}
+
+// INSTITUTIONAL OBJECTIVES
+
+model InstitutionalObjective {
+  id           String        @id @default(uuid()) @db.Uuid
+  title        String        @db.VarChar(200)
+  description  String?
+  displayOrder Int
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@index([displayOrder])
+  @@map("institutional_objectives")
+  @@schema("content")
+}
+
+// STRATEGIC FOCUS AREAS
+
+model StrategicFocusArea {
+  id           String        @id @default(uuid()) @db.Uuid
+  title        String        @db.VarChar(200)
+  description  String
+  icon         String?       @db.VarChar(100)
+  displayOrder Int
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@index([displayOrder])
+  @@map("strategic_focus_areas")
+  @@schema("content")
+}
+
+// VISION & MISSION
+
+model InstitutionalDirection {
+  id        String        @id @default(uuid()) @db.Uuid
+  vision    String
+  mission   String
+  status    ContentStatus @default(draft)
+
+  createdAt DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("institutional_direction")
+  @@schema("content")
+}
+
+// CORE VALUES
+
+model CoreValue {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String        @db.VarChar(150)
+  description  String
+  displayOrder Int
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@index([displayOrder])
+  @@map("core_values")
+  @@schema("content")
+}
+
+// PEOPLE
+
+model Person {
+  id                String      @id @default(uuid()) @db.Uuid
+  firstName         String      @db.VarChar(100)
+  middleName        String?     @db.VarChar(100)
+  lastName          String      @db.VarChar(100)
+  title             String?     @db.VarChar(50)
+  displayName       String      @db.VarChar(255)
+  professionalTitle String?     @db.VarChar(255)
+  bio               String?
+  department        String?     @db.VarChar(255)
+  profileUrl        String?     @db.VarChar(500)
+  email             String?     @db.VarChar(255)
+  phone             String?     @db.VarChar(50)
+  photoMediaId      String?     @db.Uuid
+
+  createdAt         DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime    @updatedAt @db.Timestamptz(6)
+
+  photoMedia       MediaAsset?          @relation("PersonPhoto", fields: [photoMediaId], references: [id])
+  leadershipAssignments LeadershipAssignment[]
+  leadershipProfile LeadershipProfile?
+  directorMessages DirectorMessage[]
+  leadershipPriorities LeadershipPriority[]
+
+  @@index([photoMediaId])
+  @@map("people")
+  @@schema("content")
+}
+
+// LEADERSHIP POSITIONS
+
+model LeadershipPosition {
+  id           String        @id @default(uuid()) @db.Uuid
+  title        String        @db.VarChar(255)
+  description  String?
+  category     String        @db.VarChar(100)
+  displayOrder Int
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  assignments  LeadershipAssignment[]
+
+  @@index([displayOrder])
+  @@map("leadership_positions")
+  @@schema("content")
+}
+
+// LEADERSHIP ASSIGNMENTS
+
+model LeadershipAssignment {
+  id           String        @id @default(uuid()) @db.Uuid
+  personId     String        @db.Uuid
+  positionId   String        @db.Uuid
+  startDate    DateTime      @db.Date
+  endDate      DateTime?     @db.Date
+  description  String?
+  displayOrder Int?
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  person       Person             @relation(fields: [personId], references: [id])
+  position     LeadershipPosition  @relation(fields: [positionId], references: [id])
+
+  @@index([personId])
+  @@index([positionId])
+  @@index([startDate])
+  @@index([endDate])
+  @@map("leadership_assignments")
+  @@schema("content")
+}
+
+// LEADERSHIP PROFILE
+
+model LeadershipProfile {
+  id                String        @id @default(uuid()) @db.Uuid
+  personId          String        @unique @db.Uuid
+  academicRank      String?       @db.VarChar(150)
+  educationSummary  String?
+  researchInterests String?
+  leadershipBio     String?
+  status            ContentStatus @default(draft)
+
+  createdAt         DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime      @updatedAt @db.Timestamptz(6)
+
+  person            Person        @relation(fields: [personId], references: [id])
+
+  @@map("leadership_profiles")
+  @@schema("content")
+}
+
+// DIRECTOR MESSAGES
+
+model DirectorMessage {
+  id          String        @id @default(uuid()) @db.Uuid
+  personId    String        @db.Uuid
+  title       String        @db.VarChar(255)
+  message     String
+  publishedAt DateTime?     @db.Timestamptz(6)
+  status      ContentStatus @default(draft)
+
+  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @db.Timestamptz(6)
+
+  person      Person        @relation(fields: [personId], references: [id])
+
+  @@index([personId])
+  @@index([publishedAt])
+  @@map("director_messages")
+  @@schema("content")
+}
+
+// LEADERSHIP PRIORITIES
+
+model LeadershipPriority {
+  id           String        @id @default(uuid()) @db.Uuid
+  personId     String        @db.Uuid
+  title        String        @db.VarChar(200)
+  description  String
+  displayOrder Int
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  person       Person        @relation(fields: [personId], references: [id])
+
+  @@index([personId])
+  @@index([displayOrder])
+  @@map("leadership_priorities")
+  @@schema("content")
+}
+
+// INSTITUTIONAL HISTORY
+
+model InstitutionHistory {
+  id           String        @id @default(uuid()) @db.Uuid
+  title        String        @db.VarChar(255)
+  introduction String
+  journeyText  String?
+  legacyText   String?
+  futureText   String?
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("institution_history")
+  @@schema("content")
+}
+
+// HISTORICAL MILESTONES
+
+model HistoricalMilestone {
+  id           String        @id @default(uuid()) @db.Uuid
+  year         Int           @db.SmallInt
+  title        String        @db.VarChar(255)
+  description  String
+  imageMediaId String?       @db.Uuid
+  displayOrder Int
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  imageMedia   MediaAsset?   @relation("MilestoneImage", fields: [imageMediaId], references: [id])
+
+  @@index([year])
+  @@index([displayOrder])
+  @@index([imageMediaId])
+  @@map("historical_milestones")
+  @@schema("content")
+}
+
+// VISITOR visitor_types
+
+model VisitorType {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String        @db.VarChar(150)
+  description  String
+  icon         String?       @db.VarChar(100)
+  displayOrder Int
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@index([displayOrder])
+  @@map("visitor_types")
+  @@schema("content")
+}
+
+// VISIT OPPORTUNITIES
+
+model VisitOpportunity {
+  id           String        @id @default(uuid()) @db.Uuid
+  title        String        @db.VarChar(200)
+  description  String
+  linkUrl      String?       @db.VarChar(500)
+  displayOrder Int
+  status       ContentStatus @default(draft)
+
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@index([displayOrder])
+  @@map("visit_opportunities")
+  @@schema("content")
+}
+
+// MEDIA ASSETS
+
+model MediaAsset {
+  id         String        @id @default(uuid()) @db.Uuid
+  fileName   String        @db.VarChar(255)
+  storageUrl String
+  altText    String        @db.VarChar(500)
+  caption    String?
+  mimeType   String        @db.VarChar(100)
+  width      Int?
+  height     Int?
+  status     ContentStatus @default(draft)
+
+  createdAt  DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime      @updatedAt @db.Timestamptz(6)
+
+  people     Person[] @relation("PersonPhoto")
+  milestones HistoricalMilestone[] @relation("MilestoneImage")
+
+  @@map("media_assets")
+  @@schema("content")
+}
+
+// INSTITUTIONAL STATISTICS
+
+model InstitutionalStatistic {
+  id            String        @id @default(uuid()) @db.Uuid
+  label         String        @db.VarChar(150)
+  value         String        @db.VarChar(50)
+  description   String?
+  displayOrder  Int
+  status        ContentStatus @default(draft)
+  effectiveFrom DateTime?     @db.Date
+  effectiveTo   DateTime?     @db.Date
+
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@index([displayOrder])
+  @@index([effectiveFrom])
+  @@index([effectiveTo])
+  @@map("institutional_statistics")
+  @@schema("content")
+}
