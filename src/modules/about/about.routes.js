@@ -1,6 +1,6 @@
 const express = require("express");
 
-const aboutController = require("../controllers/about.controller");
+const aboutController = require("./about.controller");
 
 const router = express.Router();
 
@@ -26,25 +26,13 @@ router.get("/overview", aboutController.getAboutOverview);
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/objectives",
-  aboutController.getInstitutionalObjectives
-);
+router.get("/objectives", aboutController.getInstitutionalObjectives);
 
-router.get(
-  "/focus-areas",
-  aboutController.getStrategicFocusAreas
-);
+router.get("/focus-areas", aboutController.getStrategicFocusAreas);
 
-router.get(
-  "/direction",
-  aboutController.getInstitutionalDirection
-);
+router.get("/direction", aboutController.getInstitutionalDirection);
 
-router.get(
-  "/core-values",
-  aboutController.getCoreValues
-);
+router.get("/core-values", aboutController.getCoreValues);
 
 /*
 |--------------------------------------------------------------------------
@@ -56,40 +44,22 @@ router.get("/people", aboutController.getPeople);
 
 router.get("/people/:id", aboutController.getPerson);
 
-router.get(
-  "/leadership/positions",
-  aboutController.getLeadershipPositions
-);
+router.get("/leadership/positions", aboutController.getLeadershipPositions);
 
-router.get(
-  "/leadership/assignments",
-  aboutController.getLeadershipAssignments
-);
+router.get("/leadership/assignments", aboutController.getLeadershipAssignments);
 
-router.get(
-  "/leadership/profiles",
-  aboutController.getLeadershipProfiles
-);
+router.get("/leadership/profiles", aboutController.getLeadershipProfiles);
 
 router.get(
   "/leadership/profiles/person/:personId",
-  aboutController.getLeadershipProfileByPersonId
+  aboutController.getLeadershipProfileByPersonId,
 );
 
-router.get(
-  "/leadership/messages",
-  aboutController.getDirectorMessages
-);
+router.get("/leadership/messages", aboutController.getDirectorMessages);
 
-router.get(
-  "/leadership/messages/:id",
-  aboutController.getDirectorMessage
-);
+router.get("/leadership/messages/:id", aboutController.getDirectorMessage);
 
-router.get(
-  "/leadership/priorities",
-  aboutController.getLeadershipPriorities
-);
+router.get("/leadership/priorities", aboutController.getLeadershipPriorities);
 
 /*
 |--------------------------------------------------------------------------
@@ -97,15 +67,9 @@ router.get(
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/history",
-  aboutController.getInstitutionHistory
-);
+router.get("/history", aboutController.getInstitutionHistory);
 
-router.get(
-  "/history/milestones",
-  aboutController.getHistoricalMilestones
-);
+router.get("/history/milestones", aboutController.getHistoricalMilestones);
 
 /*
 |--------------------------------------------------------------------------
@@ -113,15 +77,9 @@ router.get(
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/visitors/types",
-  aboutController.getVisitorTypes
-);
+router.get("/visitors/types", aboutController.getVisitorTypes);
 
-router.get(
-  "/visitors/opportunities",
-  aboutController.getVisitOpportunities
-);
+router.get("/visitors/opportunities", aboutController.getVisitOpportunities);
 
 /*
 |--------------------------------------------------------------------------
@@ -129,10 +87,7 @@ router.get(
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/media",
-  aboutController.getMediaAssets
-);
+router.get("/media", aboutController.getMediaAssets);
 
 /*
 |--------------------------------------------------------------------------
@@ -140,9 +95,6 @@ router.get(
 |--------------------------------------------------------------------------
 */
 
-router.get(
-  "/statistics",
-  aboutController.getInstitutionalStatistics
-);
+router.get("/statistics", aboutController.getInstitutionalStatistics);
 
 module.exports = router;

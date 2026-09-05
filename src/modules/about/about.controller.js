@@ -1,4 +1,4 @@
-const aboutService = require("../services/about.service");
+const aboutService = require('./about.service');
 
 const sendSuccess = (res, data) => {
   res.status(200).json({

@@ -7,7 +7,7 @@ const YAML = require("yaml");
 const fs = require("fs");
 const path = require("path");
 
-const router = require("./routes");
+const router = require("./routes/index");
 // const { notfound} = require("./middleware/notfound.middleware");
 // const { errorHandler } = require("./middleware/errorHandler.middleware");
 
