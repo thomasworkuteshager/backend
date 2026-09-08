@@ -4,6 +4,12 @@ CREATE SCHEMA IF NOT EXISTS "auth";
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "content";
 
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "media";
+
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "people";
+
 -- CreateEnum
 CREATE TYPE "content"."ContentStatus" AS ENUM ('draft', 'published', 'archived');
 
@@ -71,27 +77,6 @@ CREATE TABLE "content"."core_values" (
     "updatedAt" TIMESTAMPTZ(6) NOT NULL,
 
     CONSTRAINT "core_values_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "content"."people" (
-    "id" UUID NOT NULL,
-    "firstName" VARCHAR(100) NOT NULL,
-    "middleName" VARCHAR(100),
-    "lastName" VARCHAR(100) NOT NULL,
-    "title" VARCHAR(50),
-    "displayName" VARCHAR(255) NOT NULL,
-    "professionalTitle" VARCHAR(255),
-    "bio" TEXT,
-    "department" VARCHAR(255),
-    "profileUrl" VARCHAR(500),
-    "email" VARCHAR(255),
-    "phone" VARCHAR(50),
-    "photoMediaId" UUID,
-    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
-
-    CONSTRAINT "people_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -226,23 +211,6 @@ CREATE TABLE "content"."visit_opportunities" (
 );
 
 -- CreateTable
-CREATE TABLE "content"."media_assets" (
-    "id" UUID NOT NULL,
-    "fileName" VARCHAR(255) NOT NULL,
-    "storageUrl" TEXT NOT NULL,
-    "altText" VARCHAR(500) NOT NULL,
-    "caption" TEXT,
-    "mimeType" VARCHAR(100) NOT NULL,
-    "width" INTEGER,
-    "height" INTEGER,
-    "status" "content"."ContentStatus" NOT NULL DEFAULT 'draft',
-    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
-
-    CONSTRAINT "media_assets_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "content"."institutional_statistics" (
     "id" UUID NOT NULL,
     "label" VARCHAR(150) NOT NULL,
@@ -270,6 +238,84 @@ CREATE TABLE "auth"."users" (
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "auth"."roles" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "auth"."permissions" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "permissions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "auth"."user_roles" (
+    "userId" INTEGER NOT NULL,
+    "roleId" INTEGER NOT NULL,
+
+    CONSTRAINT "user_roles_pkey" PRIMARY KEY ("userId","roleId")
+);
+
+-- CreateTable
+CREATE TABLE "auth"."role_permissions" (
+    "roleId" INTEGER NOT NULL,
+    "permissionId" INTEGER NOT NULL,
+
+    CONSTRAINT "role_permissions_pkey" PRIMARY KEY ("roleId","permissionId")
+);
+
+-- CreateTable
+CREATE TABLE "media"."media_assets" (
+    "id" UUID NOT NULL,
+    "fileName" VARCHAR(255) NOT NULL,
+    "storageUrl" TEXT NOT NULL,
+    "mimeType" VARCHAR(100) NOT NULL,
+    "fileSize" BIGINT,
+    "altText" VARCHAR(500),
+    "caption" TEXT,
+    "width" INTEGER,
+    "height" INTEGER,
+    "status" "content"."ContentStatus" NOT NULL DEFAULT 'draft',
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "media_assets_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "people"."people" (
+    "id" UUID NOT NULL,
+    "firstName" VARCHAR(100) NOT NULL,
+    "middleName" VARCHAR(100),
+    "lastName" VARCHAR(100) NOT NULL,
+    "title" VARCHAR(50),
+    "displayName" VARCHAR(255) NOT NULL,
+    "professionalTitle" VARCHAR(255),
+    "bio" TEXT,
+    "department" VARCHAR(255),
+    "profileUrl" VARCHAR(500),
+    "email" VARCHAR(255),
+    "phone" VARCHAR(50),
+    "photoMediaId" UUID,
+    "status" "content"."ContentStatus" NOT NULL DEFAULT 'draft',
+    "createdAt" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMPTZ(6) NOT NULL,
+
+    CONSTRAINT "people_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE INDEX "institutional_objectives_displayOrder_idx" ON "content"."institutional_objectives"("displayOrder");
 
@@ -278,9 +324,6 @@ CREATE INDEX "strategic_focus_areas_displayOrder_idx" ON "content"."strategic_fo
 
 -- CreateIndex
 CREATE INDEX "core_values_displayOrder_idx" ON "content"."core_values"("displayOrder");
-
--- CreateIndex
-CREATE INDEX "people_photoMediaId_idx" ON "content"."people"("photoMediaId");
 
 -- CreateIndex
 CREATE INDEX "leadership_positions_displayOrder_idx" ON "content"."leadership_positions"("displayOrder");
@@ -339,23 +382,59 @@ CREATE INDEX "institutional_statistics_effectiveTo_idx" ON "content"."institutio
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "auth"."users"("email");
 
--- AddForeignKey
-ALTER TABLE "content"."people" ADD CONSTRAINT "people_photoMediaId_fkey" FOREIGN KEY ("photoMediaId") REFERENCES "content"."media_assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "roles_name_key" ON "auth"."roles"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "permissions_name_key" ON "auth"."permissions"("name");
+
+-- CreateIndex
+CREATE INDEX "user_roles_roleId_idx" ON "auth"."user_roles"("roleId");
+
+-- CreateIndex
+CREATE INDEX "role_permissions_permissionId_idx" ON "auth"."role_permissions"("permissionId");
+
+-- CreateIndex
+CREATE INDEX "media_assets_mimeType_idx" ON "media"."media_assets"("mimeType");
+
+-- CreateIndex
+CREATE INDEX "media_assets_status_idx" ON "media"."media_assets"("status");
+
+-- CreateIndex
+CREATE INDEX "people_photoMediaId_idx" ON "people"."people"("photoMediaId");
+
+-- CreateIndex
+CREATE INDEX "people_status_idx" ON "people"."people"("status");
 
 -- AddForeignKey
-ALTER TABLE "content"."leadership_assignments" ADD CONSTRAINT "leadership_assignments_personId_fkey" FOREIGN KEY ("personId") REFERENCES "content"."people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "content"."leadership_assignments" ADD CONSTRAINT "leadership_assignments_personId_fkey" FOREIGN KEY ("personId") REFERENCES "people"."people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "content"."leadership_assignments" ADD CONSTRAINT "leadership_assignments_positionId_fkey" FOREIGN KEY ("positionId") REFERENCES "content"."leadership_positions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "content"."leadership_profiles" ADD CONSTRAINT "leadership_profiles_personId_fkey" FOREIGN KEY ("personId") REFERENCES "content"."people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "content"."leadership_profiles" ADD CONSTRAINT "leadership_profiles_personId_fkey" FOREIGN KEY ("personId") REFERENCES "people"."people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "content"."director_messages" ADD CONSTRAINT "director_messages_personId_fkey" FOREIGN KEY ("personId") REFERENCES "content"."people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "content"."director_messages" ADD CONSTRAINT "director_messages_personId_fkey" FOREIGN KEY ("personId") REFERENCES "people"."people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "content"."leadership_priorities" ADD CONSTRAINT "leadership_priorities_personId_fkey" FOREIGN KEY ("personId") REFERENCES "content"."people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "content"."leadership_priorities" ADD CONSTRAINT "leadership_priorities_personId_fkey" FOREIGN KEY ("personId") REFERENCES "people"."people"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "content"."historical_milestones" ADD CONSTRAINT "historical_milestones_imageMediaId_fkey" FOREIGN KEY ("imageMediaId") REFERENCES "content"."media_assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "content"."historical_milestones" ADD CONSTRAINT "historical_milestones_imageMediaId_fkey" FOREIGN KEY ("imageMediaId") REFERENCES "media"."media_assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auth"."user_roles" ADD CONSTRAINT "user_roles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "auth"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auth"."user_roles" ADD CONSTRAINT "user_roles_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "auth"."roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auth"."role_permissions" ADD CONSTRAINT "role_permissions_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "auth"."roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "auth"."role_permissions" ADD CONSTRAINT "role_permissions_permissionId_fkey" FOREIGN KEY ("permissionId") REFERENCES "auth"."permissions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "people"."people" ADD CONSTRAINT "people_photoMediaId_fkey" FOREIGN KEY ("photoMediaId") REFERENCES "media"."media_assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;

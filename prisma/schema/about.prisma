@@ -1,4 +1,6 @@
-// ABOUT AboutOverview
+// ============================================================
+// ABOUT OVERVIEW
+// ============================================================
 
 model AboutOverview {
   id             String        @id @default(uuid()) @db.Uuid
@@ -8,14 +10,16 @@ model AboutOverview {
   excellenceText String?
   status         ContentStatus @default(draft)
 
-  createdAt      DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@map("about_overview")
   @@schema("content")
 }
 
+// ============================================================
 // INSTITUTIONAL OBJECTIVES
+// ============================================================
 
 model InstitutionalObjective {
   id           String        @id @default(uuid()) @db.Uuid
@@ -24,15 +28,17 @@ model InstitutionalObjective {
   displayOrder Int
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([displayOrder])
   @@map("institutional_objectives")
   @@schema("content")
 }
 
+// ============================================================
 // STRATEGIC FOCUS AREAS
+// ============================================================
 
 model StrategicFocusArea {
   id           String        @id @default(uuid()) @db.Uuid
@@ -42,30 +48,34 @@ model StrategicFocusArea {
   displayOrder Int
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([displayOrder])
   @@map("strategic_focus_areas")
   @@schema("content")
 }
 
-// VISION & MISSION
+// ============================================================
+// VISION AND MISSION
+// ============================================================
 
 model InstitutionalDirection {
-  id        String        @id @default(uuid()) @db.Uuid
-  vision    String
-  mission   String
-  status    ContentStatus @default(draft)
+  id      String        @id @default(uuid()) @db.Uuid
+  vision  String
+  mission String
+  status  ContentStatus @default(draft)
 
-  createdAt DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@map("institutional_direction")
   @@schema("content")
 }
 
+// ============================================================
 // CORE VALUES
+// ============================================================
 
 model CoreValue {
   id           String        @id @default(uuid()) @db.Uuid
@@ -74,46 +84,17 @@ model CoreValue {
   displayOrder Int
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([displayOrder])
   @@map("core_values")
   @@schema("content")
 }
 
-// PEOPLE
-
-model Person {
-  id                String      @id @default(uuid()) @db.Uuid
-  firstName         String      @db.VarChar(100)
-  middleName        String?     @db.VarChar(100)
-  lastName          String      @db.VarChar(100)
-  title             String?     @db.VarChar(50)
-  displayName       String      @db.VarChar(255)
-  professionalTitle String?     @db.VarChar(255)
-  bio               String?
-  department        String?     @db.VarChar(255)
-  profileUrl        String?     @db.VarChar(500)
-  email             String?     @db.VarChar(255)
-  phone             String?     @db.VarChar(50)
-  photoMediaId      String?     @db.Uuid
-
-  createdAt         DateTime    @default(now()) @db.Timestamptz(6)
-  updatedAt         DateTime    @updatedAt @db.Timestamptz(6)
-
-  photoMedia       MediaAsset?          @relation("PersonPhoto", fields: [photoMediaId], references: [id])
-  leadershipAssignments LeadershipAssignment[]
-  leadershipProfile LeadershipProfile?
-  directorMessages DirectorMessage[]
-  leadershipPriorities LeadershipPriority[]
-
-  @@index([photoMediaId])
-  @@map("people")
-  @@schema("content")
-}
-
+// ============================================================
 // LEADERSHIP POSITIONS
+// ============================================================
 
 model LeadershipPosition {
   id           String        @id @default(uuid()) @db.Uuid
@@ -123,17 +104,19 @@ model LeadershipPosition {
   displayOrder Int
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  assignments LeadershipAssignment[]
 
-  assignments  LeadershipAssignment[]
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([displayOrder])
   @@map("leadership_positions")
   @@schema("content")
 }
 
+// ============================================================
 // LEADERSHIP ASSIGNMENTS
+// ============================================================
 
 model LeadershipAssignment {
   id           String        @id @default(uuid()) @db.Uuid
@@ -145,11 +128,11 @@ model LeadershipAssignment {
   displayOrder Int?
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  person   Person             @relation(fields: [personId], references: [id])
+  position LeadershipPosition @relation(fields: [positionId], references: [id])
 
-  person       Person             @relation(fields: [personId], references: [id])
-  position     LeadershipPosition  @relation(fields: [positionId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([personId])
   @@index([positionId])
@@ -159,7 +142,9 @@ model LeadershipAssignment {
   @@schema("content")
 }
 
-// LEADERSHIP PROFILE
+// ============================================================
+// LEADERSHIP PROFILES
+// ============================================================
 
 model LeadershipProfile {
   id                String        @id @default(uuid()) @db.Uuid
@@ -170,16 +155,18 @@ model LeadershipProfile {
   leadershipBio     String?
   status            ContentStatus @default(draft)
 
-  createdAt         DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt         DateTime      @updatedAt @db.Timestamptz(6)
+  person Person @relation(fields: [personId], references: [id])
 
-  person            Person        @relation(fields: [personId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@map("leadership_profiles")
   @@schema("content")
 }
 
+// ============================================================
 // DIRECTOR MESSAGES
+// ============================================================
 
 model DirectorMessage {
   id          String        @id @default(uuid()) @db.Uuid
@@ -189,10 +176,10 @@ model DirectorMessage {
   publishedAt DateTime?     @db.Timestamptz(6)
   status      ContentStatus @default(draft)
 
-  createdAt   DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime      @updatedAt @db.Timestamptz(6)
+  person Person @relation(fields: [personId], references: [id])
 
-  person      Person        @relation(fields: [personId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([personId])
   @@index([publishedAt])
@@ -200,7 +187,9 @@ model DirectorMessage {
   @@schema("content")
 }
 
+// ============================================================
 // LEADERSHIP PRIORITIES
+// ============================================================
 
 model LeadershipPriority {
   id           String        @id @default(uuid()) @db.Uuid
@@ -210,10 +199,10 @@ model LeadershipPriority {
   displayOrder Int
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  person Person @relation(fields: [personId], references: [id])
 
-  person       Person        @relation(fields: [personId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([personId])
   @@index([displayOrder])
@@ -221,7 +210,9 @@ model LeadershipPriority {
   @@schema("content")
 }
 
+// ============================================================
 // INSTITUTIONAL HISTORY
+// ============================================================
 
 model InstitutionHistory {
   id           String        @id @default(uuid()) @db.Uuid
@@ -232,14 +223,16 @@ model InstitutionHistory {
   futureText   String?
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@map("institution_history")
   @@schema("content")
 }
 
+// ============================================================
 // HISTORICAL MILESTONES
+// ============================================================
 
 model HistoricalMilestone {
   id           String        @id @default(uuid()) @db.Uuid
@@ -250,10 +243,10 @@ model HistoricalMilestone {
   displayOrder Int
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  imageMedia MediaAsset? @relation("MilestoneImage", fields: [imageMediaId], references: [id])
 
-  imageMedia   MediaAsset?   @relation("MilestoneImage", fields: [imageMediaId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([year])
   @@index([displayOrder])
@@ -262,7 +255,7 @@ model HistoricalMilestone {
   @@schema("content")
 }
 
-// VISITOR visitor_types
+// VISITOR TYPES
 
 model VisitorType {
   id           String        @id @default(uuid()) @db.Uuid
@@ -272,15 +265,17 @@ model VisitorType {
   displayOrder Int
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([displayOrder])
   @@map("visitor_types")
   @@schema("content")
 }
 
+// ============================================================
 // VISIT OPPORTUNITIES
+// ============================================================
 
 model VisitOpportunity {
   id           String        @id @default(uuid()) @db.Uuid
@@ -290,38 +285,17 @@ model VisitOpportunity {
   displayOrder Int
   status       ContentStatus @default(draft)
 
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([displayOrder])
   @@map("visit_opportunities")
   @@schema("content")
 }
 
-// MEDIA ASSETS
-
-model MediaAsset {
-  id         String        @id @default(uuid()) @db.Uuid
-  fileName   String        @db.VarChar(255)
-  storageUrl String
-  altText    String        @db.VarChar(500)
-  caption    String?
-  mimeType   String        @db.VarChar(100)
-  width      Int?
-  height     Int?
-  status     ContentStatus @default(draft)
-
-  createdAt  DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt  DateTime      @updatedAt @db.Timestamptz(6)
-
-  people     Person[] @relation("PersonPhoto")
-  milestones HistoricalMilestone[] @relation("MilestoneImage")
-
-  @@map("media_assets")
-  @@schema("content")
-}
-
+// ============================================================
 // INSTITUTIONAL STATISTICS
+// ============================================================
 
 model InstitutionalStatistic {
   id            String        @id @default(uuid()) @db.Uuid
@@ -333,8 +307,8 @@ model InstitutionalStatistic {
   effectiveFrom DateTime?     @db.Date
   effectiveTo   DateTime?     @db.Date
 
-  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([displayOrder])
   @@index([effectiveFrom])

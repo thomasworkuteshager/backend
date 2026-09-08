@@ -1,4 +1,4 @@
-const aboutService = require('./about.service');
+const aboutService = require("./about.public.service");
 
 const sendSuccess = (res, data) => {
   res.status(200).json({
@@ -7,11 +7,7 @@ const sendSuccess = (res, data) => {
   });
 };
 
-/*
-|--------------------------------------------------------------------------
-| COMPLETE ABOUT PAGE
-|--------------------------------------------------------------------------
-*/
+// Complete About Page
 
 const getAboutPage = async (req, res, next) => {
   try {
@@ -23,15 +19,18 @@ const getAboutPage = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| ABOUT OVERVIEW
-|--------------------------------------------------------------------------
-*/
+// About Overview
 
 const getAboutOverview = async (req, res, next) => {
   try {
     const data = await aboutService.getAboutOverview();
+
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "About overview not found",
+      });
+    }
 
     sendSuccess(res, data);
   } catch (error) {
@@ -39,11 +38,7 @@ const getAboutOverview = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| OBJECTIVES
-|--------------------------------------------------------------------------
-*/
+// Institutional Objectives
 
 const getInstitutionalObjectives = async (req, res, next) => {
   try {
@@ -55,11 +50,7 @@ const getInstitutionalObjectives = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| STRATEGIC FOCUS
-|--------------------------------------------------------------------------
-*/
+// Strategic Focus Areas
 
 const getStrategicFocusAreas = async (req, res, next) => {
   try {
@@ -71,15 +62,18 @@ const getStrategicFocusAreas = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| VISION & MISSION
-|--------------------------------------------------------------------------
-*/
+// Institutional Direction
 
 const getInstitutionalDirection = async (req, res, next) => {
   try {
     const data = await aboutService.getInstitutionalDirection();
+
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "Institutional direction not found",
+      });
+    }
 
     sendSuccess(res, data);
   } catch (error) {
@@ -87,11 +81,7 @@ const getInstitutionalDirection = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| CORE VALUES
-|--------------------------------------------------------------------------
-*/
+// Core Values
 
 const getCoreValues = async (req, res, next) => {
   try {
@@ -103,44 +93,7 @@ const getCoreValues = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| PEOPLE
-|--------------------------------------------------------------------------
-*/
-
-const getPeople = async (req, res, next) => {
-  try {
-    const data = await aboutService.getPeople();
-
-    sendSuccess(res, data);
-  } catch (error) {
-    next(error);
-  }
-};
-
-const getPerson = async (req, res, next) => {
-  try {
-    const data = await aboutService.getPersonById(req.params.id);
-
-    if (!data) {
-      return res.status(404).json({
-        success: false,
-        message: "Person not found",
-      });
-    }
-
-    sendSuccess(res, data);
-  } catch (error) {
-    next(error);
-  }
-};
-
-/*
-|--------------------------------------------------------------------------
-| LEADERSHIP
-|--------------------------------------------------------------------------
-*/
+// Leadership
 
 const getLeadershipPositions = async (req, res, next) => {
   try {
@@ -174,8 +127,9 @@ const getLeadershipProfiles = async (req, res, next) => {
 
 const getLeadershipProfileByPersonId = async (req, res, next) => {
   try {
-    const data =
-      await aboutService.getLeadershipProfileByPersonId(req.params.personId);
+    const data = await aboutService.getLeadershipProfileByPersonId(
+      req.params.personId
+    );
 
     if (!data) {
       return res.status(404).json({
@@ -190,11 +144,7 @@ const getLeadershipProfileByPersonId = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| DIRECTOR MESSAGES
-|--------------------------------------------------------------------------
-*/
+// Director Messages
 
 const getDirectorMessages = async (req, res, next) => {
   try {
@@ -223,11 +173,7 @@ const getDirectorMessage = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| LEADERSHIP PRIORITIES
-|--------------------------------------------------------------------------
-*/
+// Leadership Priorities
 
 const getLeadershipPriorities = async (req, res, next) => {
   try {
@@ -239,15 +185,18 @@ const getLeadershipPriorities = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| HISTORY
-|--------------------------------------------------------------------------
-*/
+// History
 
 const getInstitutionHistory = async (req, res, next) => {
   try {
     const data = await aboutService.getInstitutionHistory();
+
+    if (!data) {
+      return res.status(404).json({
+        success: false,
+        message: "Institution history not found",
+      });
+    }
 
     sendSuccess(res, data);
   } catch (error) {
@@ -265,11 +214,7 @@ const getHistoricalMilestones = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| VISITORS
-|--------------------------------------------------------------------------
-*/
+// Visitors
 
 const getVisitorTypes = async (req, res, next) => {
   try {
@@ -291,27 +236,7 @@ const getVisitOpportunities = async (req, res, next) => {
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| MEDIA
-|--------------------------------------------------------------------------
-*/
-
-const getMediaAssets = async (req, res, next) => {
-  try {
-    const data = await aboutService.getMediaAssets();
-
-    sendSuccess(res, data);
-  } catch (error) {
-    next(error);
-  }
-};
-
-/*
-|--------------------------------------------------------------------------
-| STATISTICS
-|--------------------------------------------------------------------------
-*/
+// Institutional Statistics
 
 const getInstitutionalStatistics = async (req, res, next) => {
   try {
@@ -325,13 +250,13 @@ const getInstitutionalStatistics = async (req, res, next) => {
 
 module.exports = {
   getAboutPage,
+
   getAboutOverview,
   getInstitutionalObjectives,
   getStrategicFocusAreas,
   getInstitutionalDirection,
   getCoreValues,
-  getPeople,
-  getPerson,
+
   getLeadershipPositions,
   getLeadershipAssignments,
   getLeadershipProfiles,
@@ -339,10 +264,12 @@ module.exports = {
   getDirectorMessages,
   getDirectorMessage,
   getLeadershipPriorities,
+
   getInstitutionHistory,
   getHistoricalMilestones,
+
   getVisitorTypes,
   getVisitOpportunities,
-  getMediaAssets,
+
   getInstitutionalStatistics,
 };
