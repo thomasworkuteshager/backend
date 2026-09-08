@@ -1,0 +1,51 @@
+// prisma/schema/footer.prisma
+
+// Footer Navigation Links
+model FooterNavigationLink {
+  id            String        @id @default(uuid()) @db.Uuid
+  groupName     String        @db.VarChar(100)
+  label         String        @db.VarChar(200)
+  path          String        @db.VarChar(500)
+  displayOrder  Int           @default(0)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("navigation_links")
+  @@schema("footer")
+}
+
+// Footer Social Links
+model FooterSocialLink {
+  id            String        @id @default(uuid()) @db.Uuid
+  platform      String        @unique @db.VarChar(50)
+  label         String        @db.VarChar(50)
+  url           String        @db.VarChar(500)
+  icon          String        @db.VarChar(50)
+  colorClass    String        @db.VarChar(100)
+  displayOrder  Int           @default(0)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("social_links")
+  @@schema("footer")
+}
+
+// Footer Contact Info
+model FooterContactInfo {
+  id            String        @id @default(uuid()) @db.Uuid
+  addressLine1  String        @db.Text
+  addressLine2  String?       @db.Text
+  city          String        @db.VarChar(100)
+  country       String        @db.VarChar(100)
+  postalBox     String        @db.VarChar(50)
+  email         String        @db.VarChar(255)
+  phone         String        @db.VarChar(50)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("contact_info")
+  @@schema("footer")
+}

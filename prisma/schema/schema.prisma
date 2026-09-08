@@ -5,6 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  schemas  = ["auth", "content"]
+  url      = "postgresql://postgres:root@localhost:5432/contact-footer"
+  schemas  = ["auth", "content", "footer"]
 }

@@ -1,0 +1,187 @@
+// prisma/schema/contact.prisma
+
+// Content Status Enum (already exists in enums.prisma)
+// Form Submission Status
+enum FormStatus {
+  pending
+  read
+  replied
+  archived
+}
+
+// Contact Category
+enum ContactCategory {
+  student
+  visitor
+  partner
+  researcher
+  other
+}
+
+// Main Office
+model MainOffice {
+  id            String        @id @default(uuid()) @db.Uuid
+  name          String        @db.VarChar(200)
+  address       String        @db.Text
+  phone         String        @db.VarChar(50)
+  email         String        @db.VarChar(255)
+  workingHours  String        @db.VarChar(200)
+  latitude      Float?        @db.Decimal(10, 7)
+  longitude     Float?        @db.Decimal(10, 7)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("main_office")
+  @@schema("content")
+}
+
+// Department
+model Department {
+  id               String                 @id @default(uuid()) @db.Uuid
+  name             String                 @db.VarChar(200)
+  slug             String                 @unique @db.VarChar(100)
+  head             String                 @db.VarChar(200)
+  email            String                 @db.VarChar(255)
+  phone            String                 @db.VarChar(50)
+  location         String                 @db.Text
+  description      String?                @db.Text
+  displayOrder     Int                    @default(0)
+  status           ContentStatus          @default(published)
+  createdAt        DateTime               @default(now()) @db.Timestamptz(6)
+  updatedAt        DateTime               @updatedAt @db.Timestamptz(6)
+  
+  staffContacts    StaffContact[]
+  socialLinks      DepartmentSocialLink[]
+  formSubmissions  FormSubmission[]
+
+  @@map("departments")
+  @@schema("content")
+}
+
+// Staff Contacts
+model StaffContact {
+  id            String        @id @default(uuid()) @db.Uuid
+  departmentId  String        @db.Uuid
+  name          String        @db.VarChar(200)
+  title         String?       @db.VarChar(200)
+  email         String?       @db.VarChar(255)
+  phone         String?       @db.VarChar(50)
+  displayOrder  Int           @default(0)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  department    Department    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@map("staff_contacts")
+  @@schema("content")
+}
+
+// Department Social Links
+model DepartmentSocialLink {
+  id            String        @id @default(uuid()) @db.Uuid
+  departmentId  String        @db.Uuid
+  platform      String        @db.VarChar(50)
+  url           String        @db.VarChar(500)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  department    Department    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@unique([departmentId, platform])
+  @@map("department_social_links")
+  @@schema("content")
+}
+
+// Form Submissions
+model FormSubmission {
+  id            String          @id @default(uuid()) @db.Uuid
+  name          String          @db.VarChar(200)
+  email         String          @db.VarChar(255)
+  phone         String?         @db.VarChar(50)
+  category      ContactCategory @default(student)
+  departmentId  String?         @db.Uuid
+  subject       String          @db.VarChar(200)
+  message       String          @db.Text
+  status        FormStatus      @default(pending)
+  isRead        Boolean         @default(false)
+  adminNotes    String?         @db.Text
+  assignedTo    String?         @db.Uuid
+  respondedAt   DateTime?       @db.Timestamptz(6)
+  createdAt     DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime        @updatedAt @db.Timestamptz(6)
+
+  department    Department?     @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+
+  @@map("form_submissions")
+  @@schema("content")
+}
+
+// Social Links (Global)
+model SocialLink {
+  id            String        @id @default(uuid()) @db.Uuid
+  platform      String        @unique @db.VarChar(50)
+  url           String        @db.VarChar(500)
+  icon          String        @db.VarChar(50)
+  followers     Int?
+  displayOrder  Int           @default(0)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("social_links")
+  @@schema("content")
+}
+
+// Quick Contact Cards
+model QuickContactCard {
+  id            String        @id @default(uuid()) @db.Uuid
+  title         String        @db.VarChar(200)
+  icon          String        @db.VarChar(50)
+  email         String        @db.VarChar(255)
+  phone         String        @db.VarChar(50)
+  description   String        @db.Text
+  color         String        @db.VarChar(50)
+  displayOrder  Int           @default(0)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("quick_contact_cards")
+  @@schema("content")
+}
+
+// Campus Address
+model CampusAddress {
+  id            String        @id @default(uuid()) @db.Uuid
+  street        String        @db.VarChar(200)
+  city          String        @db.VarChar(100)
+  country       String        @db.VarChar(100)
+  postalCode    String        @db.VarChar(20)
+  latitude      Float         @db.Decimal(10, 7)
+  longitude     Float         @db.Decimal(10, 7)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("campus_address")
+  @@schema("content")
+}
+
+// Office Hours
+model OfficeHour {
+  id            String        @id @default(uuid()) @db.Uuid
+  day           String        @db.VarChar(20)
+  openingTime   String?       @db.Time
+  closingTime   String?       @db.Time
+  isClosed      Boolean       @default(false)
+  displayOrder  Int           @default(0)
+  status        ContentStatus @default(published)
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime      @updatedAt @db.Timestamptz(6)
+
+  @@map("office_hours")
+  @@schema("content")
+}
