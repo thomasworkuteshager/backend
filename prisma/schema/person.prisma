@@ -1,0 +1,31 @@
+model Person {
+  id                String        @id @default(uuid()) @db.Uuid
+  firstName         String        @db.VarChar(100)
+  middleName        String?       @db.VarChar(100)
+  lastName          String        @db.VarChar(100)
+  title             String?       @db.VarChar(50)
+  displayName       String        @db.VarChar(255)
+  professionalTitle String?       @db.VarChar(255)
+  bio               String?
+  department        String?       @db.VarChar(255)
+  profileUrl        String?       @db.VarChar(500)
+  email             String?       @db.VarChar(255)
+  phone             String?       @db.VarChar(50)
+  photoMediaId      String?       @db.Uuid
+  status            ContentStatus @default(draft)
+
+  photoMedia MediaAsset? @relation("PersonPhoto", fields: [photoMediaId], references: [id])
+
+  leadershipAssignments LeadershipAssignment[]
+  leadershipProfile     LeadershipProfile?
+  directorMessages      DirectorMessage[]
+  leadershipPriorities  LeadershipPriority[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@index([photoMediaId])
+  @@index([status])
+  @@map("people")
+  @@schema("people")
+}

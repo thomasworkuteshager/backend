@@ -1,6 +1,6 @@
-const prisma = require('../config/database');
-const { hashPassword, comparePassword } = require('../utils/password');
-const { signToken } = require('../utils/jwt');
+const prisma = require('../../config/prisma');
+const { hashPassword, comparePassword } = require('../../utils/password');
+const { signToken } = require('../../utils/jwt');
 
 const registerUser = async ({ name, email, password }) => {
   const exists = await prisma.user.findUnique({ where: { email } });

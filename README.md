@@ -9,13 +9,15 @@ A starter Express + Prisma + JWT backend with authentication, user routes, and S
 2. Generate Prisma client:
    npx prisma generate
 3. Run database migrations:
-   npx prisma migrate dev --name init
+   npx prisma migrate dev
 4. Start the app:
    npm run dev
 
 ## Environment
 
-Copy `.env.example` to `.env` if needed and update values.
+Copy `.env.example` to `.env`, set `DATABASE_URL` to your PostgreSQL connection string,
+and make sure the database exists before running migrations. The server verifies the
+PostgreSQL connection before it starts listening.
 
 ## API
 
