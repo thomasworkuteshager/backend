@@ -1,28 +1,38 @@
 model Person {
-  id                String        @id @default(uuid()) @db.Uuid
-  firstName         String        @db.VarChar(100)
-  middleName        String?       @db.VarChar(100)
-  lastName          String        @db.VarChar(100)
-  title             String?       @db.VarChar(50)
-  displayName       String        @db.VarChar(255)
-  professionalTitle String?       @db.VarChar(255)
-  bio               String?
-  department        String?       @db.VarChar(255)
-  profileUrl        String?       @db.VarChar(500)
-  email             String?       @db.VarChar(255)
-  phone             String?       @db.VarChar(50)
-  photoMediaId      String?       @db.Uuid
-  status            ContentStatus @default(draft)
+  id         String  @id @default(uuid()) @db.Uuid
+  firstName  String  @map("first_name") @db.VarChar(100)
+  middleName String? @map("middle_name") @db.VarChar(100)
+  lastName   String  @map("last_name") @db.VarChar(100)
+
+  title             String? @db.VarChar(50)
+  displayName       String  @map("display_name") @db.VarChar(255)
+  professionalTitle String? @map("professional_title") @db.VarChar(255)
+
+  bio        String?
+  department String? @db.VarChar(255)
+  profileUrl String? @map("profile_url") @db.VarChar(500)
+  email      String? @db.VarChar(255)
+  phone      String? @db.VarChar(50)
+
+  photoMediaId String? @map("photo_media_id") @db.Uuid
+
+  status ContentStatus @default(draft)
 
   photoMedia MediaAsset? @relation("PersonPhoto", fields: [photoMediaId], references: [id])
+
+  facultyProfile FacultyProfile?
 
   leadershipAssignments LeadershipAssignment[]
   leadershipProfile     LeadershipProfile?
   directorMessages      DirectorMessage[]
   leadershipPriorities  LeadershipPriority[]
 
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  projectMembers     ProjectMember[]
+  publicationAuthors PublicationAuthor[]
+  researchLabCenters ResearchLabCenter[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   @@index([photoMediaId])
   @@index([status])

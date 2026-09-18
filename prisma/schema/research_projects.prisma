@@ -1,0 +1,47 @@
+model ResearchProject {
+  id    String @id @default(uuid()) @db.Uuid
+  title String @db.VarChar(255)
+
+  summary     String
+  description String?
+
+  researchAreaId String? @map("research_area_id") @db.Uuid
+  labCenterId    String? @map("lab_center_id") @db.Uuid
+
+  startDate DateTime? @map("start_date") @db.Date
+  endDate   DateTime? @map("end_date") @db.Date
+
+  externalUrl String? @map("external_url") @db.VarChar(500)
+
+  displayOrder Int?
+  status       ContentStatus @default(draft)
+
+  researchArea ResearchArea?      @relation(fields: [researchAreaId], references: [id])
+  labCenter    ResearchLabCenter? @relation(fields: [labCenterId], references: [id])
+
+  members ProjectMember[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("research_projects")
+  @@schema("content")
+}
+
+model ProjectMember {
+  id        String @id @default(uuid()) @db.Uuid
+  projectId String @map("project_id") @db.Uuid
+  personId  String @map("person_id") @db.Uuid
+
+  role         String? @db.VarChar(150)
+  displayOrder Int?    @map("display_order")
+
+  project ResearchProject @relation(fields: [projectId], references: [id])
+  person  Person          @relation(fields: [personId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("project_members")
+  @@schema("content")
+}

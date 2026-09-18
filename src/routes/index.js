@@ -16,6 +16,9 @@ const admissionsAdminRoutes = require("../modules/admissions/admissions.admin.ro
 const newsEventsPublicRoutes = require("../modules/news_events/newsEvents.public.routes");
 const newsEventsAdminRoutes = require("../modules/news_events/newsEvents.admin.routes");
 
+// faculty research routes
+const facultyResearchRoutes = require("../modules/faculty_research/faculty_research.routes");
+
 const router = express.Router();
 
 // Authentication
@@ -59,4 +62,7 @@ router.use("/news-events", newsEventsPublicRoutes);
 
 // CMS/Admin: POST/PUT/DELETE /api/cms/news-events/...
 router.use("/cms/news-events", newsEventsAdminRoutes);
+
+// Faculty Research Routes
+router.use("/faculty-research", facultyResearchRoutes);
 module.exports = router;

@@ -1,0 +1,39 @@
+model Publication {
+  id    String @id @default(uuid()) @db.Uuid
+  title String @db.VarChar(500)
+
+  publicationType String? @map("publication_type") @db.VarChar(100)
+  venue           String? @db.VarChar(255)
+  publicationYear Int?    @map("publication_year") @db.SmallInt
+
+  abstract String?
+
+  doi         String? @db.VarChar(255)
+  externalUrl String? @map("external_url") @db.VarChar(500)
+
+  status ContentStatus @default(draft)
+
+  authors PublicationAuthor[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("publications")
+  @@schema("content")
+}
+
+model PublicationAuthor {
+  id            String @id @default(uuid()) @db.Uuid
+  publicationId String @map("publication_id") @db.Uuid
+  personId      String @map("person_id") @db.Uuid
+
+  authorOrder Int @map("author_order")
+
+  publication Publication @relation(fields: [publicationId], references: [id])
+  person      Person      @relation(fields: [personId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("publication_authors")
+  @@schema("content")
+}

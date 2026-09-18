@@ -1,0 +1,30 @@
+model FacultyResearchOverview {
+  id          String        @id @default(uuid()) @db.Uuid
+  eyebrow     String?       @db.VarChar(100)
+  title       String        @db.VarChar(255)
+  description String
+  status      ContentStatus @default(draft)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("faculty_research_overview")
+  @@schema("content")
+}
+
+model ResearchArea {
+  id           String        @id @default(uuid()) @db.Uuid
+  title        String        @db.VarChar(200)
+  description  String?
+  icon         String?       @db.VarChar(100)
+  displayOrder Int           @map("display_order")
+  status       ContentStatus @default(draft)
+
+  projects ResearchProject[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("research_areas")
+  @@schema("content")
+}

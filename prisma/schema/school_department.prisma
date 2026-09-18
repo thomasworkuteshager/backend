@@ -1,0 +1,42 @@
+model School {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String        @db.VarChar(200)
+  description  String?
+  displayOrder Int           @map("display_order")
+  status       ContentStatus @default(draft)
+
+  departments Department[]
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("schools")
+  @@schema("content")
+}
+
+model Department {
+  id           String        @id @default(uuid()) @db.Uuid
+  schoolId     String?       @map("school_id") @db.Uuid
+  name         String        @db.VarChar(200)
+  slug         String        @unique @db.VarChar(100)
+  head         String        @db.VarChar(200)
+  email        String        @db.VarChar(255)
+  phone        String        @db.VarChar(50)
+  location     String        @db.Text
+  description  String?       @db.Text
+  displayOrder Int           @default(0)
+  status       ContentStatus @default(published)
+
+  school School? @relation(fields: [schoolId], references: [id])
+
+  staffContacts   StaffContact[]
+  socialLinks     DepartmentSocialLink[]
+  formSubmissions FormSubmission[]
+  labs            ResearchLabCenter[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+
+  @@map("departments")
+  @@schema("content")
+}

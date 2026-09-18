@@ -8,38 +8,39 @@ enum DegreeLevel {
   phd
   diploma
   certificate
+
   @@schema("content")
 }
 
 model AdmissionProgram {
-  id             String          @id @default(uuid()) @db.Uuid
-  title          String          @db.VarChar(255)
-  slug           String          @unique @db.VarChar(255)
-  level          DegreeLevel
-  description    String
-  requirements   String
-  tuitionFee     String?         @db.VarChar(100)
-  financialAid   String?
-  status         ContentStatus   @default(draft)
-  deadlines      AdmissionDeadline[]
-  createdAt      DateTime        @default(now()) @db.Timestamptz(6)
-  updatedAt      DateTime        @updatedAt @db.Timestamptz(6)
+  id           String              @id @default(uuid()) @db.Uuid
+  title        String              @db.VarChar(255)
+  slug         String              @unique @db.VarChar(255)
+  level        DegreeLevel
+  description  String
+  requirements String
+  tuitionFee   String?             @db.VarChar(100)
+  financialAid String?
+  status       ContentStatus       @default(draft)
+  deadlines    AdmissionDeadline[]
+  createdAt    DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime            @updatedAt @db.Timestamptz(6)
 
   @@map("admission_programs")
   @@schema("content")
 }
 
 model AdmissionDeadline {
-  id          String           @id @default(uuid()) @db.Uuid
-  programId   String           @db.Uuid
-  title       String           @db.VarChar(200)
-  deadlineDate DateTime        @db.Timestamptz(6)
-  academicYear String          @db.VarChar(50)
-  description String?
-  status      ContentStatus    @default(draft)
-  program     AdmissionProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
-  createdAt   DateTime         @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime         @updatedAt @db.Timestamptz(6)
+  id           String           @id @default(uuid()) @db.Uuid
+  programId    String           @db.Uuid
+  title        String           @db.VarChar(200)
+  deadlineDate DateTime         @db.Timestamptz(6)
+  academicYear String           @db.VarChar(50)
+  description  String?
+  status       ContentStatus    @default(draft)
+  program      AdmissionProgram @relation(fields: [programId], references: [id], onDelete: Cascade)
+  createdAt    DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime         @updatedAt @db.Timestamptz(6)
 
   @@index([programId])
   @@index([deadlineDate])
